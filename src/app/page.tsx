@@ -177,11 +177,10 @@ export default function Home() {
               <button
                 key={tag}
                 onClick={() => setActiveTag(tag)}
-                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
-                  activeTag === tag
+                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${activeTag === tag
                     ? "bg-blue-500 text-white shadow-lg shadow-blue-500/20"
                     : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-blue-400"
-                }`}
+                  }`}
               >
                 {tag}
               </button>
@@ -232,19 +231,64 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="border-t border-slate-200 dark:border-slate-700 py-10">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <div className="flex items-center justify-center gap-2 mb-3">
-            <span className="text-2xl">⚙️</span>
-            <span className="font-bold text-xl text-slate-900 dark:text-white">
-              Dev<span className="text-blue-500">Tools</span>Hub
-            </span>
+        <div className="max-w-7xl mx-auto px-4">
+
+          {/* Sponsored Section */}
+          <div className="text-center mb-8">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">
+              Recommended for Developers
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <a
+                href="https://www.digitalocean.com/?refcode=https://m.do.co/c/ee6ae3a7358a"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-blue-400 transition-all text-sm font-medium text-slate-700 dark:text-slate-300 hover:-translate-y-0.5"
+              >
+                🌊 DigitalOcean — $200 Free Credit
+              </a>
+              <a
+                href="https://www.namecheap.com/?aff=YOUR_AFF_ID"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-blue-400 transition-all text-sm font-medium text-slate-700 dark:text-slate-300 hover:-translate-y-0.5"
+              >
+                🔗 Namecheap — Cheap Domains
+              </a>
+              <a
+                href="https://www.hostinger.com/affiliates"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-blue-400 transition-all text-sm font-medium text-slate-700 dark:text-slate-300 hover:-translate-y-0.5"
+              >
+                🚀 Hostinger — Best Web Hosting
+              </a>
+            </div>
           </div>
-          <p className="text-slate-500 dark:text-slate-400 text-sm">
-            Built with Next.js + Tailwind CSS + Groq AI
-          </p>
-          <p className="text-slate-400 dark:text-slate-600 text-xs mt-2">
-            Free forever. No login required.
-          </p>
+
+          {/* Divider */}
+          <div className="border-t border-slate-200 dark:border-slate-700 pt-8 text-center">
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <span className="text-2xl">⚙️</span>
+              <span className="font-bold text-xl text-slate-900 dark:text-white">
+                Dev<span className="text-blue-500">Tools</span>Hub
+              </span>
+            </div>
+            <p className="text-slate-500 dark:text-slate-400 text-sm">
+              Built with Next.js + Tailwind CSS + Groq AI
+            </p>
+            <p className="text-slate-400 dark:text-slate-600 text-xs mt-2">
+              Free forever. No login required.
+            </p>
+            <div className="flex justify-center gap-4 mt-4 text-xs text-slate-400">
+              <a href="/sitemap.xml" className="hover:text-blue-500 transition-colors">Sitemap</a>
+              <span>•</span>
+              <a href="/#tools" className="hover:text-blue-500 transition-colors">All Tools</a>
+              <span>•</span>
+              <a href="mailto:uzairchohan686@gmail.com" className="hover:text-blue-500 transition-colors">Contact</a>
+            </div>
+          </div>
+
         </div>
       </footer>
     </>
