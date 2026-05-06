@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useToast } from "@/components/Toast";
 import BackButton from "@/components/BackButton";
 
 const LANGUAGES = [
@@ -18,7 +19,8 @@ export default function CodeExplainer() {
   const [language, setLanguage] = useState("JavaScript");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [copied, setCopied] = useState(false);
+  const [copyLabel, setCopyLabel] = useState("📋 Copy");
+  const { showToast, ToastComponent } = useToast();
 
   const explainCode = async () => {
     if (!code.trim()) {
@@ -30,7 +32,7 @@ export default function CodeExplainer() {
     setOutput("");
 
     try {
-      const response = await fetch("${process.env.NEXT_PUBLIC_API_URL}/api/ai/explain", {
+      const response = await fetch("/api/explain", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code, language }),
@@ -50,9 +52,12 @@ export default function CodeExplainer() {
   };
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(output);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    if (!output) return;
+    navigator.clipboard.writeText(output).then(() => {
+      setCopyLabel("✅ Copied!");
+      showToast("Explanation copied to clipboard!", "success");
+      setTimeout(() => setCopyLabel("📋 Copy"), 2000);
+    });
   };
 
   const SAMPLE_CODE = `function fibonacci(n) {
@@ -88,11 +93,10 @@ console.log(fibonacci(10));`;
             <button
               key={lang.value}
               onClick={() => setLanguage(lang.value)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all border-2 ${
-                language === lang.value
-                  ? "bg-blue-500 text-white border-blue-500 shadow-lg shadow-blue-500/20"
-                  : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-blue-400"
-              }`}
+              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all border-2 ${language === lang.value
+                ? "bg-blue-500 text-white border-blue-500 shadow-lg shadow-blue-500/20"
+                : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-blue-400"
+                }`}
             >
               {lang.emoji} {lang.label}
             </button>
@@ -135,10 +139,7 @@ console.log(fibonacci(10));`;
             className="w-full py-3 rounded-xl bg-blue-500 hover:bg-blue-600 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold transition-all shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2"
           >
             {loading ? (
-              <>
-                <span className="animate-spin">⏳</span>
-                AI is analyzing...
-              </>
+              <><span className="animate-spin">⏳</span> AI is analyzing...</>
             ) : (
               "🤖 Explain This Code"
             )}
@@ -156,7 +157,7 @@ console.log(fibonacci(10));`;
                 onClick={copyToClipboard}
                 className="text-xs px-3 py-1 rounded-lg bg-green-100 hover:bg-green-200 dark:bg-green-900/30 dark:hover:bg-green-900/50 text-green-700 dark:text-green-400 font-medium transition-colors"
               >
-                {copied ? "✅ Copied!" : "📋 Copy"}
+                {copyLabel}
               </button>
             )}
           </div>
@@ -174,11 +175,30 @@ console.log(fibonacci(10));`;
                 <span>AI is reading your code...</span>
               </div>
             ) : output ? (
-              <p className="leading-relaxed whitespace-pre-wrap">{output}</p>
+              <div className="leading-relaxed space-y-2">
+                {output.split("\n").map((line, i) => {
+                  const t = line.trim();
+                  if (!t) return <div key={i} className="h-2" />;
+                  if (t.startsWith("### "))
+                    return <h3 key={i} className="font-bold text-blue-500 dark:text-blue-400 text-sm mt-3">{t.replace("### ", "")}</h3>;
+                  if (t.startsWith("## "))
+                    return <h2 key={i} className="font-extrabold text-slate-900 dark:text-white text-base mt-4">{t.replace("## ", "")}</h2>;
+                  if (t.startsWith("- ") || t.startsWith("* "))
+                    return <div key={i} className="flex gap-2 ml-2"><span className="text-blue-500 shrink-0">▸</span><span>{t.replace(/^[-*]\s/, "")}</span></div>;
+                  if (t.startsWith("**") && t.endsWith("**"))
+                    return <p key={i} className="font-bold text-slate-900 dark:text-white">{t.replace(/\*\*/g, "")}</p>;
+                  const parts = t.split(/\*\*(.*?)\*\*/g);
+                  return (
+                    <p key={i}>
+                      {parts.map((part, j) =>
+                        j % 2 === 1 ? <strong key={j} className="font-bold text-slate-900 dark:text-white">{part}</strong> : part
+                      )}
+                    </p>
+                  );
+                })}
+              </div>
             ) : (
-              <p className="text-slate-400">
-                Code explanation will appear here...
-              </p>
+              <p className="text-slate-400">Code explanation will appear here...</p>
             )}
           </div>
 
@@ -189,6 +209,7 @@ console.log(fibonacci(10));`;
           )}
         </div>
       </div>
+      {ToastComponent}
     </div>
   );
 }

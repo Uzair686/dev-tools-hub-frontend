@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useToast } from "@/components/Toast";
 import BackButton from "@/components/BackButton";
 
 const TONES = [
@@ -18,7 +19,8 @@ export default function TextRewriter() {
   const [tone, setTone] = useState("professional");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [copied, setCopied] = useState(false);
+  const [copyLabel, setCopyLabel] = useState("📋 Copy");
+  const { showToast, ToastComponent } = useToast();
 
   const rewriteText = async () => {
     if (!input.trim()) {
@@ -30,7 +32,7 @@ export default function TextRewriter() {
     setOutput("");
 
     try {
-      const response = await fetch("${process.env.NEXT_PUBLIC_API_URL}/api/ai/rewrite", {
+      const response = await fetch("/api/rewrite", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: input, tone }),
@@ -50,9 +52,12 @@ export default function TextRewriter() {
   };
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(output);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    if (!output) return;
+    navigator.clipboard.writeText(output).then(() => {
+      setCopyLabel("✅ Copied!");
+      showToast("Text copied to clipboard!", "success");
+      setTimeout(() => setCopyLabel("📋 Copy"), 2000);
+    });
   };
 
   return (
@@ -81,11 +86,10 @@ export default function TextRewriter() {
             <button
               key={t.value}
               onClick={() => setTone(t.value)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all border-2 ${
-                tone === t.value
+              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all border-2 ${tone === t.value
                   ? "bg-blue-500 text-white border-blue-500 shadow-lg shadow-blue-500/20"
                   : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-blue-400"
-              }`}
+                }`}
             >
               {t.emoji} {t.label}
             </button>
@@ -120,10 +124,7 @@ export default function TextRewriter() {
             className="w-full py-3 rounded-xl bg-blue-500 hover:bg-blue-600 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold transition-all shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2"
           >
             {loading ? (
-              <>
-                <span className="animate-spin">⏳</span>
-                AI is rewriting...
-              </>
+              <><span className="animate-spin">⏳</span> AI is rewriting...</>
             ) : (
               "✨ Rewrite with AI"
             )}
@@ -141,7 +142,7 @@ export default function TextRewriter() {
                 onClick={copyToClipboard}
                 className="text-xs px-3 py-1 rounded-lg bg-green-100 hover:bg-green-200 dark:bg-green-900/30 dark:hover:bg-green-900/50 text-green-700 dark:text-green-400 font-medium transition-colors"
               >
-                {copied ? "✅ Copied!" : "📋 Copy"}
+                {copyLabel}
               </button>
             )}
           </div>
@@ -160,9 +161,7 @@ export default function TextRewriter() {
             ) : output ? (
               <p className="leading-relaxed whitespace-pre-wrap">{output}</p>
             ) : (
-              <p className="text-slate-400">
-                Rewritten text will appear here...
-              </p>
+              <p className="text-slate-400">Rewritten text will appear here...</p>
             )}
           </div>
 
@@ -173,6 +172,7 @@ export default function TextRewriter() {
           )}
         </div>
       </div>
+      {ToastComponent}
     </div>
   );
 }
