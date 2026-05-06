@@ -178,8 +178,8 @@ export default function Home() {
                 key={tag}
                 onClick={() => setActiveTag(tag)}
                 className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${activeTag === tag
-                    ? "bg-blue-500 text-white shadow-lg shadow-blue-500/20"
-                    : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-blue-400"
+                  ? "bg-blue-500 text-white shadow-lg shadow-blue-500/20"
+                  : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-blue-400"
                   }`}
               >
                 {tag}
@@ -286,11 +286,20 @@ export default function Home() {
               <a href="/#tools" className="hover:text-blue-500 transition-colors">All Tools</a>
               <span>•</span>
               <a href="mailto:uzairchohan686@gmail.com" className="hover:text-blue-500 transition-colors">Contact</a>
+              <span>•</span>
+              <a
+                href="https://buymeacoffee.com/uzair686"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-yellow-500 transition-colors"
+              >
+                ☕ Support
+              </a>
             </div>
           </div>
 
         </div>
-      </footer>
+      </footer >
     </>
   );
 }
